@@ -4,6 +4,12 @@ import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
+export interface User {
+  username: string;
+  authdata: string;
+  roles?: string[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -45,9 +51,13 @@ export class AuthService {
     const authString = `${username}:${password}`;
     const headers = new HttpHeaders().set('Authorization', 'Basic ' + btoa(authString));
 
-    return this.http.get(`${this.baseUrl}/person`, { headers }).pipe(
+    return this.http.get<{roles: string[]}>(`${this.baseUrl}/user/roles`, { headers }).pipe(
       map(response => {
-        const user = { username, authdata: btoa(authString) };
+        const user: User = { 
+          username, 
+          authdata: btoa(authString),
+          roles: response.roles 
+        };
         localStorage.setItem('currentUser', JSON.stringify(user));
         this.currentUserSubject.next(user);
         return user;
@@ -59,7 +69,12 @@ export class AuthService {
   }
 
   logout() {
+    // Clear localStorage
     localStorage.removeItem('currentUser');
+    // Clear cookies
+    document.cookie.split(';').forEach(cookie => {
+      document.cookie = cookie.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
+    });
     this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
   }
@@ -72,5 +87,10 @@ export class AuthService {
         .set('Content-Type', 'application/json');
     }
     return new HttpHeaders();
+  }
+
+  hasRole(role: string): boolean {
+    const user = this.currentUserValue;
+    return user && user.roles && user.roles.includes('ROLE_' + role);
   }
 }

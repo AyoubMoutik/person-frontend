@@ -1,19 +1,22 @@
 <div class="container">
-  <h2 class="title">Liste des Personnes</h2>
+  <div class="header">
+    <h2 class="title">Liste des Personnes</h2>
+    <button class="btn logout" (click)="logout()">Déconnexion</button>
+  </div>
   <div class="person-list">
     <div *ngFor="let personne of personnes" class="person-card">
       <div class="person-info">
         <span class="person-name">{{ personne.nom }}</span>
         <span class="person-firstname">{{ personne.prenom }}</span>
       </div>
-      <div class="button-group">
+      <div class="button-group" *ngIf="isAdmin()">
         <button class="btn edit" (click)="openEditModal(personne)">Modifier</button>
         <button class="btn delete" (click)="deletePersonne(personne.num!)">Supprimer</button>
       </div>
     </div>
   </div>
   
-  <div class="add-person-form">
+  <div class="add-person-form" *ngIf="isAdmin()">
     <h3 class="subtitle">Ajouter Personne</h3>
     <div class="form-group">
       <input [(ngModel)]="newPersonne.nom" placeholder="Nom" class="input-field">
@@ -23,7 +26,7 @@
   </div>
 
   <!-- Modal -->
-  <div class="modal" *ngIf="isModalOpen">
+  <div class="modal" *ngIf="isModalOpen && isAdmin()">
     <div class="modal-overlay" (click)="closeModal()"></div>
     <div class="modal-content">
       <h3 class="modal-title">Modifier la personne</h3>

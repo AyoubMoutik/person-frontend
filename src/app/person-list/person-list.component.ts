@@ -78,4 +78,12 @@ export class PersonListComponent implements OnInit {
       });
     }
   }
+
+  isAdmin(): boolean {
+    return this.authService.hasRole('ADMIN');
+  }
+
+  public logout(): void {
+    this.authService.logout();
+  }
 }
