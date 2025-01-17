@@ -1,0 +1,42 @@
+<div class="container">
+  <h2 class="title">Liste des Personnes</h2>
+  <div class="person-list">
+    <div *ngFor="let personne of personnes" class="person-card">
+      <div class="person-info">
+        <span class="person-name">{{ personne.nom }}</span>
+        <span class="person-firstname">{{ personne.prenom }}</span>
+      </div>
+      <div class="button-group">
+        <button class="btn edit" (click)="openEditModal(personne)">Modifier</button>
+        <button class="btn delete" (click)="deletePersonne(personne.num!)">Supprimer</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="add-person-form">
+    <h3 class="subtitle">Ajouter Personne</h3>
+    <div class="form-group">
+      <input [(ngModel)]="newPersonne.nom" placeholder="Nom" class="input-field">
+      <input [(ngModel)]="newPersonne.prenom" placeholder="Prénom" class="input-field">
+      <button (click)="addPersonne()" class="btn add">Ajouter</button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" *ngIf="isModalOpen">
+    <div class="modal-overlay" (click)="closeModal()"></div>
+    <div class="modal-content">
+      <h3 class="modal-title">Modifier la personne</h3>
+      <div class="modal-body" *ngIf="editingPersonne">
+        <div class="form-group">
+          <input [(ngModel)]="editingPersonne.nom" placeholder="Nom" class="input-field">
+          <input [(ngModel)]="editingPersonne.prenom" placeholder="Prénom" class="input-field">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn cancel" (click)="closeModal()">Annuler</button>
+        <button class="btn save" (click)="saveChanges()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
